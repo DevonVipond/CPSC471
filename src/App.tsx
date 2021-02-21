@@ -1,17 +1,12 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import HomePage from "./components/HomePage/HomePage";
-import PageWrapper from "./components/Shared/PageWrapper/PageWrapper";
+import AppRouter from "./Routers/AppRouter"
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-          <PageWrapper>
-              <HomePage/>
-
-          </PageWrapper>
+          <AppRouter/>
       </header>
     </div>
   );

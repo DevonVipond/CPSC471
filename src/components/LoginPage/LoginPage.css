@@ -1,0 +1,15 @@
+body {
+    background-color: #dadada;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: grayscale;
+}
+
+.loginContainer {
+    padding-top: 40px;
+}
+
+body > div,
+body > div > div,
+body > div > div > .ui.grid {
+    height: 100%;
+}

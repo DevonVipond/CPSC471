@@ -1,7 +1,8 @@
 class UserService {
     constructor() { }
 
-    fetchAuthenticatedUserInfo(): void {}
+    fetchUserInfo(): void {}
+    updateUserSettings(): void {}
     login(): void {}
     logout(): void {}
     register(): void {}

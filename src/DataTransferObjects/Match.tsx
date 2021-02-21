@@ -1,4 +1,4 @@
-import {User, UserProps} from "./interfaces/User";
+import {User, UserProps} from "./Interfaces/User";
 
 export class Match extends User {
     public static create({username, distance, activities}: UserProps) {

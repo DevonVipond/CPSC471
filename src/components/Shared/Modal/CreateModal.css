@@ -1,0 +1,11 @@
+
+.modal {
+    background-color: rgba(124, 159, 216, 0.8);
+    z-index: 42;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inset: 0px;
+    overflow-y: scroll;
+}
