@@ -1,30 +1,20 @@
 import './SettingsPage.css'
-import {AuthenticatedUser} from "../../Models/Interfaces/AuthenticatedUser";
+import React from 'react'
 import List from './Components/List/index'
-import Item from './Components/List/Components/Item/index'
 import {Activity} from "../../Models/Activity";
 import {Button, Input} from "semantic-ui-react";
 
 type Props = {
-    authenticatedUser: AuthenticatedUser
+    getActivities: Function,
+    addActivity: Function,
+    removeActivity: Function,
 }
-const SettingsPage = ({ authenticatedUser }: Props) => {
-    const defaultCheckedItems: Array<string> = authenticatedUser.activities().map(a => a.name())
-    const defaultUncheckedItems: Array<string> = []
 
-    Object.keys(Activity.ActivityNames).forEach(key => {
-        const activityName = Activity.ActivityNames[key]
-        if (!defaultCheckedItems.filter(a => a === activityName).length) {
-            defaultUncheckedItems.push(activityName)
-        }
-    })
+const SettingsPage = ({ getActivities, addActivity, removeActivity }: Props) => {
 
     return (
         <div className='settingsContainer'>
-            <List
-                checkedItems={defaultCheckedItems}
-                uncheckedItems={defaultUncheckedItems}
-            />
+            <List getActivities={getActivities} addActivity={addActivity} removeActivity={removeActivity} />
             <div className='marginDiv'>
                 <Input focus placeholder='distance' />
             </div>

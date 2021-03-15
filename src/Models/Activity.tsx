@@ -1,4 +1,7 @@
 const __validate = (name: string, skillLevel: string) => {
+    if (!name) {
+        throw new Error('Class Activity: Name Required!')
+    }
     const getValues: any = (hashMap: any) => {
         const keys = Object.keys(hashMap)
         return keys.map((key: any, arr: any, idx: any) => {return hashMap[key]})
@@ -37,10 +40,10 @@ export class Activity {
         this._skillLevel = skillLevel
     }
 
-    name(): string { return this._name }
-    skillLevel(): string { return this._skillLevel }
+    public name(): string { return this._name }
+    public skillLevel(): string { return this._skillLevel }
 
-    toJSON(): props {
+    public toJSON(): props {
         return {
             name: this._name,
             skillLevel: this._skillLevel

@@ -3,22 +3,20 @@ import { Friend } from "../../Models/Friend"
 import { FriendRequest } from "../../Models/FriendRequest"
 import { Match } from "../../Models/Match"
 import axios from "../../Axios/Axios"
-import { AuthenticatedUser } from "../../Models/Interfaces/AuthenticatedUser"
 import { PremiumUser } from "../../Models/PremiumUser"
 import { RegularUser } from "../../Models/RegularUser"
-import { stringify } from "querystring"
 
-abstract class BaseService {
-    private _api: any = axios
+export abstract class BaseApi {
+    protected _api: any = axios
 
-    async get(url: string): Promise<any> {
+    protected async get(url: string): Promise<any> {
 
         try {
 
             const res = await this._api.get(url) 
 
             if (res.status !== 200) {
-                throw Error('BaseService->get failed with url ' + url)
+                throw Error('BaseApi->get failed with url ' + url)
             }
 
             return res.data
@@ -28,14 +26,14 @@ abstract class BaseService {
         }
     }
 
-    async post(url: string, body: any = {}): Promise<any> {
+    protected async post(url: string, body: any = {}): Promise<any> {
 
         try {
 
             const res = await this._api.post(url, body) 
 
             if (res.status !== 200) {
-                throw Error('BaseService->post failed with url ' + url)
+                throw Error('BaseApi->post failed with url ' + url)
             }
 
             return res.data
@@ -47,7 +45,7 @@ abstract class BaseService {
 
 }
 
-class FriendService extends BaseService {
+class FriendApi extends BaseApi {
 
     /*
         {[
@@ -68,6 +66,9 @@ class FriendService extends BaseService {
             ...
         ]}
     */
+   constructor() {
+       super()
+   }
     
     async fetchIncomingFriendRequests(): Promise<Array<FriendRequest>> {
         try {
@@ -114,7 +115,7 @@ class FriendService extends BaseService {
     }
 
     /* None */
-    async acceptIncomingFriendship(request: FriendRequest): Promise<void> {
+    async acceptFriendRequest(request: FriendRequest): Promise<void> {
         try {
 
             const id = request.getId()
@@ -128,7 +129,7 @@ class FriendService extends BaseService {
     }
 
     /* None */
-    async rejectIncomingFriendship(request: FriendRequest): Promise<void> {
+    async rejectFriendRequest(request: FriendRequest): Promise<void> {
         try {
 
             const id = request.getId()
@@ -160,7 +161,7 @@ class FriendService extends BaseService {
     //async destroyFriendship(): Promise<void> {}
 }
 
-class MatchesService extends BaseService{
+class MatchesApi extends BaseApi{
 
     /* 
         {[
@@ -228,7 +229,7 @@ class MatchesService extends BaseService{
     }
 }
 
-class UserSettingsService extends BaseService {
+class UserSettingsApi extends BaseApi {
 
     /*
         {
@@ -248,7 +249,7 @@ class UserSettingsService extends BaseService {
             ],
         }
     */ 
-    async fetchUserSettings(): Promise<PremiumUser | RegularUser> {
+    async fetchAccountDetails(): Promise<PremiumUser | RegularUser> {
         try {
 
             const payload = await super.get('/settings')
@@ -289,6 +290,19 @@ class UserSettingsService extends BaseService {
         }
     }
 
+    
+    async fetchActivities(): Promise<Array<Activity>> {
+        try {
+
+            return await super.get('/activities')
+
+        } catch (e) {
+
+            throw e
+
+        }
+    }
+
     /*
         {[
             {
@@ -302,15 +316,21 @@ class UserSettingsService extends BaseService {
             ...
         ]}
     */
-    async updateActivities(activities: Array<Activity>): Promise<void> {
+    async addActivity(activity: Activity): Promise<void> {
         try {
 
-            let activitiesJson = activities.map(activity => {
-                return activity.toJSON()
-            })
+            await super.post('/activities', activity.toJSON())
 
-            await super.post('/activities', activitiesJson)
+        } catch (e) {
 
+            throw e
+        }
+    }
+
+    async removeActivity(activity: Activity): Promise<void> {
+        try {
+
+            await super.post('/activities', activity.toJSON())
 
         } catch (e) {
 
@@ -350,6 +370,6 @@ class UserSettingsService extends BaseService {
 
 }
 
-export const friendService: FriendService = Object.freeze(new FriendService())
-export const matchesService: MatchesService = Object.freeze(new MatchesService())
-export const userSettingsService: UserSettingsService = Object.freeze(new UserSettingsService())
+export const friendApi: FriendApi = new FriendApi()
+export const matchesApi: MatchesApi = new MatchesApi()
+export const userSettingsApi: UserSettingsApi = new UserSettingsApi()

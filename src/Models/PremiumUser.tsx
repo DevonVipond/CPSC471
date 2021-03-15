@@ -13,6 +13,6 @@ export class PremiumUser extends AuthenticatedUser {
     }
 
     public removeActivity(activity: Activity): void {
-        this._activities = this._activities.filter(item => item !== activity)
+        this._activities = this._activities.filter(item => item.name() !== activity.name())
     }
 }

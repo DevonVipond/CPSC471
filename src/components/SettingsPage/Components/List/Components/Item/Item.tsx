@@ -1,5 +1,5 @@
 import React from "react";
-import {Activity} from "../../../../../../Model@s/Activity";
+import {Activity} from "../../../../../../Models/Activity";
 import './Item.css'
 import ActivityModal from "../../../ActivityModal";
 

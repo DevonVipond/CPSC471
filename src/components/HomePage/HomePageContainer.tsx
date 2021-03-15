@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import HomePage from './HomePage'
 import PageWrapper from "../Shared/PageWrapper/PageWrapper";
 //import LoadingSpinner from "../../Shared/LoadingSpinner/Index";
-//import BoardService from '../../services/BoardService/Index'
+//import BoardApi from '../../services/BoardApi/Index'
 //import LoadingSpinner from "../LoadingSpinner/Index";
 
 const HomePageContainer: React.FC  = () => {
@@ -12,7 +12,7 @@ const HomePageContainer: React.FC  = () => {
     })
 
     //useEffect(() => {
-    //    BoardService.fetchBoard()
+    //    BoardApi.fetchBoard()
     //        .then(res => {
     //            setState({loading: false, boards: res})
     //        })

@@ -2,31 +2,87 @@ import React from "react";
 import './List.css'
 import './Components/Item/index'
 import { Checkbox } from "semantic-ui-react";
+import { Activity } from "../../../../Models/Activity";
                     //defaultChecked ? (<Checkbox onClick={} defaultChecked label={activityName} />) : (<Checkbox label={activityName} />)
 
-const ActivityItem = (activityName: string, defaultChecked: boolean = false) => {
-    const activityClicked = () => {
-        console.log('activity clicked')
-    }
+const ActivityItem = (clicked: Function, activityName: string, defaultChecked: boolean = false) => {
     return (
         <li>
             <div>
                 {
-                    defaultChecked ? (<Checkbox onClick={activityClicked} defaultChecked label={activityName} />) : (<Checkbox label={activityName} />)
+                    defaultChecked ? (<Checkbox onClick={(e: any) => clicked(e, activityName)} defaultChecked label={activityName} />) :
+                                     (<Checkbox onClick={(e: any) => clicked(e, activityName)} label={activityName} />)
                 }
-
             </div>
         </li>
     )
 }
 
 type Props = {
-    checkedItems: Array<string>,
-    uncheckedItems: Array<string>
+
+    addActivity: Function,
+    getActivities: Function,
+    removeActivity: Function,
 }
 
-const List = ({ checkedItems, uncheckedItems }: Props) => {
-    const [ checkedActivities, setCheckedActivities ] = React.useState()
+type State = {
+    loading: boolean,
+    startFetch: boolean,
+    activities: Array<Activity>
+}
+
+
+const List = ({ addActivity, getActivities, removeActivity }: Props) => {
+    const [state, setState] = React.useState<State>({startFetch: false, loading: true, activities: []})
+
+    React.useEffect(() => {
+        console.log('List -> fetching activities')
+        getActivities()
+            .then((a: Array<Activity>) => {
+                setState({loading: false, startFetch: state.startFetch, activities: a})
+            })
+            .catch((e: any) => { console.log(e) })
+    }, [state.startFetch])
+
+    const add = (e: any, name: string) => {
+        e.preventDefault()
+        const skillLevel = Activity.SkillLevel.BEGINNER
+        const activity = new Activity({name, skillLevel})
+        addActivity(activity).then((e: any) => {
+            setState({activities: [], startFetch: !state.startFetch, loading: true})
+        })
+    }
+
+    const remove = (e: any, name: string) => {
+        e.preventDefault()
+        const skillLevel = Activity.SkillLevel.BEGINNER
+        const activity = new Activity({name, skillLevel})
+        removeActivity(activity).then((e: any) => {
+            setState({activities: [], startFetch: !state.startFetch, loading: true})
+        })
+    }
+
+
+    const { activities, loading }: any =  state
+
+    if (loading) {
+        return <h3>Loading</h3>
+    }
+
+
+    type Item = {name: string, checked: boolean}
+    const checkedItems: Array<{name: string, checked: boolean}> = activities.map( (a: Activity) => { return { name: a.name(), checked: true } })
+    const uncheckedItems: Array<{name: string, checked: boolean}> = []
+
+    Object.keys(Activity.ActivityNames).forEach(key => {
+        const activityName = Activity.ActivityNames[key]
+        if (!checkedItems.filter(a => a.name === activityName).length) {
+            uncheckedItems.push({ name: activityName, checked: false })
+        }
+    })
+
+    let items: Array<Item> = checkedItems.concat(uncheckedItems)
+    items = items.sort(function(a: Item, b: Item) { return a.name.localeCompare(b.name) })
 
     return (
         <div>
@@ -35,8 +91,15 @@ const List = ({ checkedItems, uncheckedItems }: Props) => {
                     <h3>Activities</h3>
                 </div>
                 <ul>
-                    { checkedItems.map(a => ( ActivityItem(a, true) )) }
-                    { uncheckedItems.map(a => ( ActivityItem(a) )) }
+                    {
+                        items.map(a => {
+                            if (a.checked) {
+                                return ActivityItem(remove, a.name, true) 
+                            } else {
+                                return ActivityItem(add, a.name, false) 
+                            }
+                        }) 
+                    }
                 </ul>
 
             </div>
