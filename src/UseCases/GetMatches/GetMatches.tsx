@@ -1,5 +1,5 @@
 
-import { matchesApi } from "../../Api/FriendService/FriendService";
+import { api } from "../../Api/Api";
 import { Activity } from "../../Models/Activity";
 import { Match } from "../../Models/Match";
 import { UserState } from "../../Models/UserState";
@@ -38,7 +38,23 @@ export async function GetMatches(): Promise<Array<Match>> {
 
     try {
 
-        return await matchesApi.fetchMatches()
+        const payload = await api.get('/matches') 
+
+        const matches: Array<Match> =  payload.map( (match: any) => {
+
+            const username = match['username']
+            const distance = match['distance']
+
+            const activities: Array<Activity> = match['activities'].map((activity: any) => {
+
+                return new Activity(activity)
+
+            })
+
+            return new Match({username, distance, activities})
+        })
+
+        return matches
 
     } catch (e) {
 

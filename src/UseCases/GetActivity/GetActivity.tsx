@@ -1,4 +1,4 @@
-import { userSettingsApi } from "../../Api/FriendService/FriendService";
+import { api } from "../../Api/Api";
 import { Activity } from "../../Models/Activity";
 import { UserState } from "../../Models/UserState"
 
@@ -15,7 +15,7 @@ export async function GetActivies(): Promise<Array<Activity>> {
 
         //return UserState.Instance()._currentUser.activities()
 
-        return await userSettingsApi.fetchActivities()
+        return await api.get('/activities')
 
 
     } catch (e) {

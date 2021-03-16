@@ -4,14 +4,31 @@ import './List.css'
 import './Components/Item/index'
 import { Checkbox } from "semantic-ui-react";
 import { Activity } from "../../../../Models/Activity";
+
+let uId: number = 0
                     
 const ActivityItem = (clicked: Function, activityName: string, defaultChecked: boolean = false) => {
 
     const skillLevelOptions = [
-        { key: 1, value: Activity.SkillLevel.BEGINNER, text: 'Beginner' },
-        { key: 2, value: Activity.SkillLevel.INTERMEDIATE, text: 'Intermediate'},
-        { key: 3, value: Activity.SkillLevel.ADVANCED, text: 'Advanced' },
+        { key: 1, value: Activity.SkillLevel.BEGINNER, text: Activity.SkillLevel.BEGINNER },
+        { key: 2, value: Activity.SkillLevel.INTERMEDIATE, text: Activity.SkillLevel.INTERMEDIATE},
+        { key: 3, value: Activity.SkillLevel.ADVANCED, text: Activity.SkillLevel.ADVANCED },
     ]
+    const id = "selectSkillLevel" + (++uId).toString()
+
+    //const skillLevelSelected = (e) => {
+    //    e.preventDefault()
+
+    //    const name = activityName
+    //    const skillLevel = e.target.value
+    //    const activity = new Activity({name, skillLevel})
+    //    addActivity(activity)
+    //        .then((e: any) => {
+    //            loadActivities()
+    //        })
+    //        .catch((err: any) => {console.log("E List-> " + e)})
+
+    //}
 
     return (
         <li style={{marginBottom: defaultChecked? '70px' : '10px'}}>
@@ -20,7 +37,7 @@ const ActivityItem = (clicked: Function, activityName: string, defaultChecked: b
                     defaultChecked ? (<Checkbox onClick={(e: any) => clicked(e, activityName)} defaultChecked label={activityName} />) :
                                      (<Checkbox onClick={(e: any) => clicked(e, activityName)} label={activityName} />)
                 }
-                { defaultChecked && <Select placeholder='Skill Level' options={skillLevelOptions} /> }
+                { defaultChecked && <Select id={id} onChange={(e: any) => console.log(e)} defaultValue={Activity.SkillLevel.BEGINNER} placeholder='Skill Level' options={skillLevelOptions} /> }
             </div>
         </li>
     )
@@ -35,41 +52,52 @@ type Props = {
 
 type State = {
     loading: boolean,
-    startFetch: boolean,
     activities: Array<Activity>
 }
 
 
 const List = ({ addActivity, getActivities, removeActivity }: Props) => {
-    const [state, setState] = React.useState<State>({startFetch: false, loading: true, activities: []})
+    const [state, setState] = React.useState<State>({loading: true, activities: []})
 
-    React.useEffect(() => {
-        console.log('List -> fetching activities')
+    const loadActivities = () => {
         getActivities()
             .then((a: Array<Activity>) => {
-                setState({loading: false, startFetch: state.startFetch, activities: a})
+                setState({loading: false, activities: a})
             })
-            .catch((e: any) => { console.log(e) })
-    }, [state.startFetch])
+            .catch((e: any) => {
+                console.log(e)
+                setState({loading: false, activities: [] })
+            })
+    }
 
-    const add = (e: any, name: string) => {
+    loadActivities.bind(setState)
+    loadActivities.bind(state)
+
+    React.useEffect(() => {
+        loadActivities()
+    }, [])
+
+    const onActivityChecked = (e: any, name: string) => {
         e.preventDefault()
         const skillLevel = Activity.SkillLevel.BEGINNER
         const activity = new Activity({name, skillLevel})
-        addActivity(activity).then((e: any) => {
-            setState({activities: [], startFetch: !state.startFetch, loading: true})
-        })
+        addActivity(activity)
+            .then((e: any) => {
+                loadActivities()
+            })
+            .catch((err: any) => {console.log("E List-> " + e)})
     }
 
-    const remove = (e: any, name: string) => {
+    const onActivityUnchecked = (e: any, name: string) => {
         e.preventDefault()
         const skillLevel = Activity.SkillLevel.BEGINNER
         const activity = new Activity({name, skillLevel})
-        removeActivity(activity).then((e: any) => {
-            setState({activities: [], startFetch: !state.startFetch, loading: true})
-        })
+        removeActivity(activity)
+            .then((e: any) => {
+                loadActivities()
+            })
+            .catch((err: any) => {console.log("E List-> " + e)})
     }
-
 
     const { activities, loading }: any =  state
 
@@ -102,9 +130,9 @@ const List = ({ addActivity, getActivities, removeActivity }: Props) => {
                     {
                         items.map(a => {
                             if (a.checked) {
-                                return ActivityItem(remove, a.name, true) 
+                                return ActivityItem(onActivityUnchecked, a.name, true) 
                             } else {
-                                return ActivityItem(add, a.name, false) 
+                                return ActivityItem(onActivityChecked, a.name, false) 
                             }
                         }) 
                     }

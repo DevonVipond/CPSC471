@@ -1,11 +1,11 @@
-import { userSettingsApi } from "../../Api/FriendService/FriendService";
+import { api } from "../../Api/Api";
 
 
 export async function UpgradeAccount(): Promise<void> {
 
     try {
 
-        await userSettingsApi.upgradeToPremium()
+        await api.post('/accountType', {'accountType': 'Premium'}) 
 
     } catch (e) {
 

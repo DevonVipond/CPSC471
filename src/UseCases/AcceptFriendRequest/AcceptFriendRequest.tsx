@@ -1,5 +1,4 @@
 import { api } from "../../Api/Api";
-import { friendApi } from "../../Api/FriendService/FriendService";
 import { FriendRequest } from "../../Models/FriendRequest";
 import { UserState } from "../../Models/UserState";
 

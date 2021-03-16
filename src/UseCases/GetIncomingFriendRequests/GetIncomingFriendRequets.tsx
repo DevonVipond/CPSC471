@@ -1,5 +1,4 @@
-import { friendApi } from "../../Api/FriendService/FriendService";
-import { Activity } from "../../Models/Activity";
+import { api } from "../../Api/Api";
 import { FriendRequest } from "../../Models/FriendRequest";
 import { UserState } from "../../Models/UserState";
 
@@ -7,7 +6,15 @@ export async function GetIncomingFriendRequests(): Promise<Array<FriendRequest>>
 
     try {
 
-        return await friendApi.fetchIncomingFriendRequests()
+        const payload = await api.get('/incomingFriendRequests')
+
+        const friendRequests: Array<FriendRequest> = payload.map((f: any) => {
+
+            return new FriendRequest(f)
+
+        })
+
+        return friendRequests
 
     } catch (e) {
 
