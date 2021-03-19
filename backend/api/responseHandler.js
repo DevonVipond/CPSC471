@@ -12,7 +12,7 @@ const badRequest = (res, errMessage = undefined) => {
 }
 
 const unauthorized = (res, errMessage = undefined) => {
-    res.status(500).json(errMessage)
+    res.status(401).json(errMessage)
 }
 
 module.exports = { success, internalError, badRequest, unauthorized }

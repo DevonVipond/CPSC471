@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { unauthorized } = require('../api/responseHandler')
 
 const verify = async(req, res, next) => {
     try {
@@ -12,13 +13,15 @@ const verify = async(req, res, next) => {
 
         if (!id) { throw new Error('No user!') }
 
-        req.userId = id
+        req.username = id
 
         next()
 
     } catch(err) {
+
         console.log(err)
-        res.status(401).send('Invalid credentials')
+        
+        unauthorized('Unable to create access/refresh tokens!')
     }
 }
 

@@ -14,7 +14,9 @@ const getReportedUsers = async (req, res) => {
 
         success(res, reportsJSON)
     } catch (e) {
+
         internalError(res, e.toString())
+
     }
 }
 
@@ -71,31 +73,31 @@ const deleteUser = async (req, res) => {
 
 }
 
-const reportFriend = async (req, res) => {
+//const reportFriend = async (req, res) => {
+//
+//    const adminUsername  = req.username
+//    const { friendUsername, message } = req.body
+//
+//    if (!friendUsername || !message) {
+//        badRequest(res, 'friendUsername and message required!')
+//        return
+//    }
+//
+//
+//    try {
+//
+//        const success = await db.call('REPORT FRIEND', adminUsername, friendUsername, message) // THIS WILL DELETE THE FRIEND 
+//
+//        if (!success) {
+//            badRequest(res, "unable to report friend!")
+//            return
+//        }
+//
+//        success(res)
+//
+//    } catch (e) {
+//        internalError(res, e.toString())
+//    }
+//}
 
-    const adminUsername  = req.username
-    const { friendUsername, message } = req.body
-
-    if (!friendUsername || !message) {
-        badRequest(res, 'friendUsername and message required!')
-        return
-    }
-
-
-    try {
-
-        const success = await db.call('REPORT FRIEND', adminUsername, friendUsername, message) // THIS WILL DELETE THE FRIEND 
-
-        if (!success) {
-            badRequest(res, "unable to report friend!")
-            return
-        }
-
-        success(res)
-
-    } catch (e) {
-        internalError(res, e.toString())
-    }
-}
-
-module.exports = { getReportedUsers, resolveReport, deleteUser, reportFriend }
+module.exports = { getReportedUsers, resolveReport, deleteUser }

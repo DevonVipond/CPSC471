@@ -29,16 +29,17 @@ const getHome = async (req, res) => {
 const connectWithMatch = async (req, res) => {
 
     const { username } = req.username
-    const { recipientUsername } = req.body
+    const { recipientUsername, message } = req.body
 
-    if (!recipientUsername) {
-        badRequest(res, 'recipientUsername required!')
+    if (!recipientUsername || !message) {
+        badRequest(res, 'recipientUsername and message required!')
         return
     }
 
     try {
 
-        const success = await db.call('CONNECT WITH MATCH', username, recipientUsername)
+        const success = await db.call('CONNECT WITH MATCH', [username, recipientUsername, message])
+
         if (!success) {
             badRequest('Unable to connect to match!')
             return
@@ -57,16 +58,16 @@ const connectWithMatch = async (req, res) => {
 const reportFriend = async (req, res) => {
 
     const { username } = req.username
-    const { reportedFriendUsername } = req.body
+    const { reportedFriendUsername, message } = req.body
 
-    if (!reportedFriendUsername) {
+    if (!reportedFriendUsername, !message) {
         badRequest(res, 'username of reported friend required')
         return
     }
 
     try {
 
-        const success = await db.call('REPORT FRIEND', username, reportedFriendUsername)
+        const success = await db.call('REPORT FRIEND', username, reportedFriendUsername, message) // NOTE: This will delete the friendship!
         if (!success) {
             badRequest('Unable to connect to match!')
             return
@@ -84,16 +85,16 @@ const reportFriend = async (req, res) => {
 
 const acceptFriendRequest = async (req, res) => {
     const { username } = req.username
-    const { friendUsername: requestorUsername } = req.body
+    const { requestorUsername, message } = req.body
 
-    if (!requestorUsername) {
-        badRequest(res, 'username of friend required!')
+    if (!requestorUsername || !message) {
+        badRequest(res, 'username of friend and message required!')
         return
     }
 
     try {
 
-        const success = await db.call('ACCEPT FRIEND REQUEST', username, requestorUsername)
+        const success = await db.call('ACCEPT FRIEND REQUEST', username, requestorUsername, message)
 
         if (!success) {
             badRequest(`Friend Request With User ${requestorUsername} does not exist!`)

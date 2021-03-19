@@ -10,11 +10,12 @@ const path = require('path')
 
 const port = process.env.PORT || 5066;
 
-app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
-app.set('views', path.join(__dirname, 'views'));
+app.set('host', process.env.IP || '0.0.0.0');
+app.set('port', process.env.PORT || port);
 
-app.use(require('serve-static')(__dirname + '/../../public'));
+//app.set('views', path.join(__dirname, 'views'));
+//app.use(require('serve-static')(__dirname + '/../../public'));
+
 app.use(require('cookie-parser')());
 app.use(require('body-parser').json())//.urlencoded({ extended: true }));
 
@@ -83,15 +84,11 @@ app.use(function(req, res, next) {
     next()
 })
 
-app.use(require('./routes/user.js'))
-app.use(require('./routes/question.js'))
-app.use(require('./routes/answer.js'))
+app.use(require('./api/loginPage/router'))
 app.use(require('./middlewares/errorHandler/index.js'))
 
 const server = http.createServer(app)
 
-//const {commentsTable} = require('./db/seed.js')
-//commentsTable()
 
 server.listen(port)
 

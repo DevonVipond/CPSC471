@@ -1,6 +1,3 @@
-
-
-const { builtinModules } = require("node:module")
 const db = require(".././../db/index")
 const { success, internalError, badRequest } = require("../responseHandler")
 

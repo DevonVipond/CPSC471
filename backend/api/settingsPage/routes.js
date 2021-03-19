@@ -1,5 +1,4 @@
 var router = require('express').Router()
-const { builtinModules } = require('node:module')
 const {verify} = require('../../middlewares/auth')
 const { addActivity, removeActivity, setDistance, getSettingsPage } = require('./controller')
 
