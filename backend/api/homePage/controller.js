@@ -6,9 +6,9 @@ const getHome = async (req, res) => {
     try {
         const { username } = req.username
 
-            const friends = await db.call('GET FRIENDS FOR USER', username) 
-            const matches = await db.call('GET MATCHES FOR USER', username) 
-            const incomingFriendRequests = await db.call('GET INCOMING FRIEND REQUESTS FOR USER', username) 
+        const friends = await db.call('GET FRIENDS FOR USER', [username]) 
+        const matches = await db.call('GET MATCHES FOR USER', [username]) 
+        const incomingFriendRequests = await db.call('GET INCOMING FRIEND REQUESTS FOR USER', [username]) 
 
         const friendsJSON = makeFriendsFromDb(friends)
         const matchesJSON = makeMatchesFromDb(matches)
@@ -126,6 +126,33 @@ const rejectFriendRequest = async (req, res) => {
 
         if (!success) {
             badRequest(`Friend Request With User ${requestorUsername} does not exist!`)
+            return
+        }
+
+        success(res)
+
+    } catch (e) {
+
+        internalError(e, e.toString())
+
+    }
+
+}
+const reviewFriend = async (req, res) => { 
+    const { username } = req.username
+    const { friendUsername, message } = req.body
+
+    if (!friendUsername, message) {
+        badRequest(res, 'username of friend required!')
+        return
+    }
+
+    try {
+
+        const success = await db.call('REVIEW FRIEND', username, friendUsername, message)
+
+        if (!success) {
+            badRequest(`Friend Review With User ${friendUsername} does not exist!`)
             return
         }
 

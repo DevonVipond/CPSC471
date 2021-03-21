@@ -17,6 +17,13 @@ const skillLevelOptions = [
     { key: 3, value: Activity.SkillLevel.ADVANCED, text: Activity.SkillLevel.ADVANCED },
 ]
 
+const activityOptions = [
+    { key: 1, value: Activity.ActivityNames.SOCCER, text: Activity.ActivityNames.SOCCER },
+    { key: 2, value: Activity.ActivityNames.BASKETBALL, text:  Activity.ActivityNames.BASKETBALL},
+    { key: 3, value: Activity.ActivityNames.FOOTBALL, text:  Activity.ActivityNames.FOOTBALL},
+    { key: 4, value: Activity.ActivityNames.SKIING, text:  Activity.ActivityNames.SKIING},
+]
+
 const RegularUserSettingsPage = () => {
     const [state, setState] = React.useState<State>({loading: true})
 
@@ -59,11 +66,12 @@ const RegularUserSettingsPage = () => {
 
     const {distance, activities}: any = state
     const selectedActivity:string = activities[0].name()
+    const selectedSkillLevel:string = activities[0].skillLevel()
 
     return (
         <div className='settingsContainer'>
-            <Select id="activitySelector" onChange={(e: any) => console.log(e)} defaultValue={selectedActivity} placeholder='Skill Level' options={skillLevelOptions} />
-            <Select id="skillSelector" onChange={(e: any) => console.log(e)} defaultValue={selectedActivity} placeholder='Skill Level' options={skillLevelOptions} />
+            <Select id="activitySelector" onChange={(e: any) => console.log(e)} defaultValue={selectedActivity} placeholder='Activity' options={activityOptions} />
+            <Select id="skillSelector" onChange={(e: any) => console.log(e)} defaultValue={selectedSkillLevel} placeholder='Skill Level' options={skillLevelOptions} />
             <h3>{ distance }</h3>
             <div className="ui bottom attached button" onClick={(e: any) => save()} id="addButton" >
                 <i className="add icon" ></i>

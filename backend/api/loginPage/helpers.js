@@ -1,4 +1,13 @@
 const jwt = require('jsonwebtoken')
+const nodeGeo = require('node-geocoder');
+
+const geo = nodeGeo({
+  provider: 'google',
+  httpAdapter: 'https', 
+  apiKey: process.env.GOOGLE_API_KEY,
+  formatter: 'json' 
+});
+
 
 function createTokens (username) {
     try {
@@ -12,10 +21,26 @@ function createTokens (username) {
     }
 }
 
-function convertGPSToCity(longitude, latitude) {
+async function convertGPSToCity(longitude, latitude) {
 
-    // TODO
-    return "CALGARY"
+    const getCity = new Promise((resolve, reject) => {
+        geo.reverse({lat: latitude, lon: longitude}, function(err, res) {
+            if (err) {
+                console.error('getCity->' + err)
+                return reject(err)
+            }
+            console.log(res);
+            return resolve(res)
+        });
+    })
+
+    try {
+        return await getCity
+
+    } catch (e) {
+        console.log('convertGPSToCity -> ' + e)
+        throw e
+    }
 }
 
 function makeUserFromDb(rows) {
@@ -24,4 +49,5 @@ function makeUserFromDb(rows) {
 
     return { username, password }
 }
+
 module.exports = {createTokens, convertGPSToCity, makeUserFromDb}

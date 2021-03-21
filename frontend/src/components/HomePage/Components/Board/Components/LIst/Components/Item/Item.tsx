@@ -15,6 +15,7 @@ import ReportUserModal from "../ReportUserModal/ReportUserModal"
 import { ReportedUser } from "../../../../../../../../Models/ReportedUser";
 import { DeleteUser } from "../../../../../../../../UseCases/DeleteUser/DeleteUser";
 import { ResolveReport } from "../../../../../../../../UseCases/ResolveReport/ResolveReport";
+import { ReviewFriend } from "../../../../../../../../UseCases/ReviewFriend/ReviewFriend";
 
 
 const skillLevelToColor = (skillLevel: string): string => {
@@ -54,18 +55,30 @@ const activityIcon = (activityName: string, skillLevel: string) => {
 }
 
 export const FriendItem = ({ user, reloadBoard }: { user: Friend, reloadBoard: Function }) => {
-    const [ showModal, setShowModal ] = React.useState(false)
+    const [ showReportModal, setShowReportModal ] = React.useState(false)
+    const [ showReviewModal, setShowReviewModal ] = React.useState(false)
 
     const reportFriend = (e: any, messageBoxId: string) => {
         const reportMessageComponent: any = document.getElementById(messageBoxId)
 
         if (reportMessageComponent)
             ReportFriend(user, reportMessageComponent.value)
-                .then((res: any) => { setShowModal(false); reloadBoard();  })
+                .then((res: any) => { setShowReportModal(false); reloadBoard();  })
                 .catch((err: any) => { logError(err); })
     }
 
     reportFriend.bind(user)
+
+    const reviewFriend = (e: any, messageBoxId: string) => {
+        const htmlComponent: any = document.getElementById(messageBoxId)
+
+        if (htmlComponent)
+            ReviewFriend(user, htmlComponent.value)
+                .then((res: any) => { setShowReportModal(false); reloadBoard();  })
+                .catch((err: any) => { logError(err); })
+    }
+
+    reviewFriend.bind(user)
 
     return (
         <div className='itemContainer' >
@@ -75,11 +88,16 @@ export const FriendItem = ({ user, reloadBoard }: { user: Friend, reloadBoard: F
                 <div>
                     { user.activities().map( a => ( activityIcon(a.name(), a.skillLevel()) ) ) }
                 </div>
-                <div className="ui bottom attached button" onClick={() => setShowModal(true)} id="addButton" >
+                <div className="ui bottom attached button" onClick={() => setShowReviewModal(true)} id="addButton" >
+                    <i className="add icon" ></i>
+                    Review
+                </div>
+                <div className="ui bottom attached button" onClick={() => setShowReportModal(true)} id="addButton" >
                     <i className="add icon" ></i>
                     Report
                 </div>
-                <ReportUserModal reportFriend={reportFriend} show={showModal} onHide={() => setShowModal(false)}/>
+                <ReportUserModal reportFriend={reportFriend} show={showReportModal} onHide={() => setShowReportModal(false)}/>
+                <ReportUserModal reportFriend={reviewFriend} show={showReviewModal} onHide={() => setShowReviewModal(false)}/>
             </a>
         </div>
     )

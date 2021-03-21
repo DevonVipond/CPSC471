@@ -16,8 +16,20 @@ import { LoginUser } from "../../UseCases/Login/Login"
 import { Register } from "../../UseCases/Register/Register";
 import { Redirect } from "react-router";
 
+const registrationFields = [
+    ['username', 'usernameForm'],
+    ['password', 'passwordForm'],
+    ['first name', 'firstNameForm'],
+    ['last name', 'firstNameForm'],
+    ['phone number', 'phoneNumberForm'],
+    ['age', 'ageForm'],
+    ['about', 'aboutForm'],
+]
+
+
 let uniqueId: number = 0
-let dropdownVal: string = 'Premium'
+let accountType: string = 'Premium'
+let gender: string = 'Male'
 const login = (uId: string, pId: string) => {
 
     const uForm: any = document.getElementById(uId)
@@ -28,10 +40,26 @@ const login = (uId: string, pId: string) => {
 
 const register = (uId: string, pId: string, dId: string) => {
 
-    const uForm: any = document.getElementById(uId)
-    const pForm: any = document.getElementById(pId)
+    try {
+        const args: Array<string> = registrationFields.map((idx: any) => {
+            const htmlElement: any = document.getElementById(idx[1])
+            if (htmlElement) {
 
-    Register(uForm.value, pForm.value, dropdownVal)
+                return htmlElement.value
+            }
+
+            throw Error('missing field: '+ idx[1])
+        })
+
+        Register(args[0], args[1], args[2], args[3], args[4], args[5], args[6], accountType, gender)
+            .catch((e: any) => {console.log(e)})
+
+    } catch (e: any) {
+        console.log(e)
+        return
+    }
+
+
 }
 
 
@@ -40,25 +68,28 @@ const UIRegisterForm = (name: string) => {
     const pId: string = 'UIRegisterForm' + (++uniqueId).toString()
     const dId: string = 'UIRegisterForm' + (++uniqueId).toString()
 
+    const makeForms = () => {
+
+        return registrationFields.map((idx: any) => {
+            return (<Form.Input
+                id={idx[1]}
+                fluid
+                iconPosition="left"
+                placeholder={idx[0]}
+            />)
+        })
+
+    }
+
     return (
         <div className="loginContainer" >
             <Grid textAlign="center" verticalAlign="middle">
                 <Grid.Column style={{ maxWidth: 450 }}>
                     <Form size="large">
                         <Segment stacked>
-                            <Form.Input
-                                id={uId}
-                                fluid
-                                iconPosition="left"
-                                placeholder="username"
-                            />
-                            <Form.Input
-                                id={pId}
-                                fluid
-                                iconPosition="left"
-                                placeholder="password"
-                            />
-                            <Dropdown id={dId} onChange={(e: any, data: any) => {dropdownVal = e.target.textContent;}} clearable options={accountTypes} selection />
+                            { makeForms() }
+                            <Dropdown id={'accountdropdown'} onChange={(e: any, data: any) => {accountType = e.target.textContent;}} clearable options={accountTypes} selection />
+                            <Dropdown id={'genderDropdown'} onChange={(e: any, data: any) => {gender = e.target.textContent;}} clearable options={genderTypes} selection />
                             <Button color="teal" fluid size="large" onClick={(e: any) => register(uId, pId, dId)}>
                                 { name }
                             </Button>
@@ -69,6 +100,11 @@ const UIRegisterForm = (name: string) => {
         </div>
     )
 }
+
+const genderTypes = [
+  { key: 1, text: 'Male', value: 1 },
+  { key: 2, text: 'Female', value: 2 }
+]
 
 const accountTypes = [
   { key: 1, text: 'Premium', value: 1 },
@@ -110,7 +146,6 @@ const UILoginForm = (name: string) => {
 }
 
 const Login = () => {
-    // TODO REMOVE
     //if (sessionStorage.getItem('auth')) {
     //    return <Redirect to='/home' />
     //}

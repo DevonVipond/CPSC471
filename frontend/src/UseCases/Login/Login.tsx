@@ -1,12 +1,12 @@
 import { api } from "../../Api/Api"
 import authService from "../AuthService"
+import locationService from "../LocationService"
 
 export async function LoginUser(username: string, password: string): Promise<void> {
 
     try {
 
-        const longitude = '0'
-        const latitude  = '0'
+        const { latitude, longitude } = await locationService.getCoordinates()
         const body = {username, password, longitude, latitude}
 
         await api.post(`/user/login`, body)
@@ -18,7 +18,31 @@ export async function LoginUser(username: string, password: string): Promise<voi
 
     } catch (e) {
 
-        console.error('E: Login ' + e.toString())
+        console.error('E: LoginUser ' + e.toString())
+
+        authService.removeAuth()
+
+        throw e
+
+    }
+
+}
+
+export async function LoginAdmin(username: string, password: string): Promise<void> {
+
+    try {
+
+        const { latitude, longitude } = await locationService.getCoordinates()
+        const body = {username, password, longitude, latitude}
+
+        await api.post(`/admin/login`, body)
+
+        authService.setAuth('Admin')
+
+
+    } catch (e) {
+
+        console.error('E: LoginAdmin ' + e.toString())
 
         authService.removeAuth()
 

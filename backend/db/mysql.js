@@ -14,11 +14,11 @@ mysqlConnection.connect(function(err) {
   console.log("Connected to mysql database!");
 });
 
-mysqlConnection.query('call authenticateUser(?,?, @res); select @res;', ['test', 'password'], function(err, result) {
-  if (err) { console.log(err)}
-  console.log(result[1][0]['@res'])
-
-})
+//mysqlConnection.query('call authenticateUser(?,?, @res); select @res;', ['test', 'password'], function(err, result) {
+//  if (err) { console.log(err)}
+//  console.log(result[1][0]['@res'])
+//
+//})
 
 module.exports = mysqlConnection
   //host: process.env.DB_HOST,

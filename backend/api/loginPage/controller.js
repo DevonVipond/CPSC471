@@ -26,13 +26,13 @@ const userLogin = async (req, res) => {
             
         }
 
-        //const success = await db.call('ADD USERS LOCATION', [longitude, latitude, city]) // ENSURE THERE ARE NO MORE THAN 10 ENTRIES!!!
+        const success = await db.call('ADD USERS LOCATION', [longitude, latitude, city]) // ENSURE THERE ARE NO MORE THAN 10 ENTRIES!!!
 
-        //if (!success) {
+        if (!success) {
 
-        //    throw Error('Unable to add users location to database')
+            throw Error('Unable to add users location to database')
 
-        //}
+        }
 
         const { accessToken, refreshToken } = createTokens(username)
         setLoginCookies(res, accessToken, refreshToken)
