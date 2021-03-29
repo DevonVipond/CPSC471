@@ -1,9 +1,8 @@
 import { api } from "../../Api/Api";
 import { FriendRequest } from "../../Models/FriendRequest";
-import { UserState } from "../../Models/UserState";
 
 
-export async function AcceptFriendRequest(request: FriendRequest, message: string): Promise<void> {
+export async function AcceptFriendRequest(request: FriendRequest, message: string = ""): Promise<void> {
 
     try {
 

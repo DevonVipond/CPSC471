@@ -15,25 +15,25 @@ const getUserSettings = async (username) => {
     return {distance, activities}
 }
 const calculateDistance = (user1Long, user1Lat, user2Lat, user2Long) => {
-    validateType(user1Long, TYPES.STRING)
-    validateType(user1Lat, TYPES.STRING)
-    validateType(user2Lat, TYPES.STRING)
-    validateType(user2Long, TYPES.STRING)
+    //validateType(user1Long, TYPES.STRING)
+    //validateType(user1Lat, TYPES.STRING)
+    //validateType(user2Lat, TYPES.STRING)
+    //validateType(user2Long, TYPES.STRING)
     const deltaLong = user1Long - user2Long
     const deltaLat = user1Lat - user2Lat
 
-    return Math.sqrt(Math.pow(deltaLat, 2), Math.pow(deltaLong, 2))
+    return Math.sqrt(Math.pow(deltaLat, 2), Math.pow(deltaLong, 2)).toFixed(2)
 }
 
 const filterMatches = (originLong, originLat, matches) => {
-    validateType(originLong, TYPES.STRING)
-    validateType(originLat, TYPES.STRING)
-    validateType(matches, TYPES.OBJECT)
+    //validateType(originLong, TYPES.STRING)
+    //validateType(originLat, TYPES.STRING)
+    //validateType(matches, TYPES.OBJECT)
     let matchesWithDistance = []
     matches.forEach((m) => {
         const {latitude, longitude} = m
-        validateType(latitude, TYPES.STRING)
-        validateType(longitude, TYPES.STRING)
+        //validateType(latitude, TYPES.STRING)
+        //validateType(longitude, TYPES.STRING)
 
         const distance = calculateDistance(originLong, originLat, latitude, longitude)
         if (distance <= m.distance) {
@@ -55,8 +55,6 @@ const filterMatches = (originLong, originLat, matches) => {
     return finializedMatches
 }
 
-
-
 const getHome = async (req, res) => {
     try {
         const username = req.username
@@ -74,8 +72,9 @@ const getHome = async (req, res) => {
         const friendsDb = await db.exec('call getFriends(?)', [username])
         let friends = toDTO.users(friendsDb.data)
         for (let i=0; i<friends.length; i++) {
-            const {  activities } = await getUserSettings(friends[i].username)
+            const {  activities, distance } = await getUserSettings(friends[i].username)
             friends[i].activities = activities
+            friends[i].distance = calculateDistance(userLocation.longitude, userLocation.latitude, distance)
         }
 
 
@@ -96,8 +95,9 @@ const getHome = async (req, res) => {
         let incomingFriendRequestsDb = await db.exec('call incomingFriendRequests(?)', [username])
         let incomingFriendRequests = toDTO.users(incomingFriendRequestsDb.data)
         for (let i=0; i<incomingFriendRequests.length; i++) {
-            const {  activities } = await getUserSettings(incomingFriendRequests[i].username)
+            const {  activities, distance } = await getUserSettings(incomingFriendRequests[i].username)
             incomingFriendRequests[i].activities = activities
+            incomingFriendRequests[i].distance = calculateDistance(userLocation.longitude, userLocation.latitude, distance)
         }
 
         const response = { friends, matches, incomingFriendRequests }
@@ -123,7 +123,12 @@ const connectWithMatch = async (req, res) => {
         return
     }
 
-    try {
+    if (recipientUsername === username) {
+        badRequest(res, "Invalid params")
+        return
+    }
+
+        try {
 
         const successDb = await db.exec('call sendConnectionReq(?,?,?)', [username, recipientUsername, message])
         const procedureSucceeded = successDb.affectedRows > 0
@@ -153,6 +158,11 @@ const reportFriend = async (req, res) => {
         validateType(message, TYPES.STRING)
     } catch (e) {
         badRequest(res, 'username of reported friend and message required')
+        return
+    }
+
+    if (reportedFriendUsername === username) {
+        badRequest(res, "Invalid params")
         return
     }
 
@@ -189,6 +199,12 @@ const acceptFriendRequest = async (req, res) => {
         return
 
     }
+
+    if (requestorUsername === username) {
+        badRequest(res, "Invalid params")
+        return
+    }
+
     try {
 
         const successDb = await db.exec('call acceptRequest(?,?)', [username, requestorUsername] )
@@ -220,6 +236,11 @@ const rejectFriendRequest = async (req, res) => {
         badRequest(res, 'username of friend requestor required!')
         return
 
+    }
+
+    if (requestorUsername === username) {
+        badRequest(res, "Invalid params")
+        return
     }
 
     try {
@@ -267,6 +288,10 @@ const reviewFriend = async (req, res) => {
         return
     }
 
+    if (friendUsername === username) {
+        badRequest(res, "Invalid params")
+        return
+    }
     try {
 
         const successDb = await db.exec('call reviewFriend(?,?,?)', [username, friendUsername, rating])

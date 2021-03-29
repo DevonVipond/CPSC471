@@ -1,5 +1,6 @@
 const db = require("../../db/index")
 const { badRequest, internalError, success } = require("../responseHandler")
+const { ACCOUNT_TYPES } = require('../../constants')
 const toDTO = require('../toDTO')
 
 const isAdmin = async (username) => {
@@ -8,7 +9,7 @@ const isAdmin = async (username) => {
         const accountTypeDb  = await db.exec('call getUserType(?)', [username] )
         const accountType = toDTO.accountType(accountTypeDb.data)
 
-        return accountType.toUpperCase() === "ADMIN"
+        return accountType.toUpperCase() === ACCOUNT_TYPES.ADMIN.toUpperCase()
 
     } catch (e) {
         return true

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "./LoginPage.css"
 
 import "semantic-ui-css/semantic.min.css";
@@ -14,6 +14,9 @@ import {
 import "../../UseCases/Login/Login"
 import { LoginUser } from "../../UseCases/Login/Login"
 import { Register } from "../../UseCases/Register/Register";
+import authService from "../../UseCases/AuthService";
+import Logout from "../../UseCases/Logout/Logout";
+import {Redirect} from "react-router-dom";
 
 const registrationFields = [
     ['username', 'usernameForm'],
@@ -29,15 +32,21 @@ const registrationFields = [
 let uniqueId: number = 0
 let accountType: string = 'Premium'
 let gender: string = 'Male'
-const login = (uId: string, pId: string) => {
+const login = (uId: string, pId: string, reloadPage: Function) => {
 
     const uForm: any = document.getElementById(uId)
     const pForm: any = document.getElementById(pId)
 
     LoginUser(uForm.value, pForm.value)
+        .then((r: any) => {
+            reloadPage()
+        })
+        .catch((e: any) => {
+            alert('Login Failed!')
+        })
 }
 
-const register = (uId: string, pId: string, dId: string) => {
+const register = (uId: string, pId: string, dId: string, reloadPage: Function) => {
 
     try {
         const args: Array<string> = registrationFields.map((idx: any) => {
@@ -51,6 +60,9 @@ const register = (uId: string, pId: string, dId: string) => {
         })
 
         Register(args[0], args[1], args[2], args[3], args[4], args[5], args[6], accountType, gender)
+            .then((r: any) => {
+                reloadPage()
+            })
             .catch((e: any) => {console.log(e)})
 
     } catch (e: any) {
@@ -62,7 +74,7 @@ const register = (uId: string, pId: string, dId: string) => {
 }
 
 
-const UIRegisterForm = (name: string) => {
+const UIRegisterForm = (name: string, reloadPage: Function) => {
     const uId: string = 'UIRegisterForm' + (++uniqueId).toString()
     const pId: string = 'UIRegisterForm' + (++uniqueId).toString()
     const dId: string = 'UIRegisterForm' + (++uniqueId).toString()
@@ -89,7 +101,7 @@ const UIRegisterForm = (name: string) => {
                             { makeForms() }
                             <Dropdown id={'accountdropdown'} onChange={(e: any, data: any) => {accountType = e.target.textContent;}} clearable options={accountTypes} selection />
                             <Dropdown id={'genderDropdown'} onChange={(e: any, data: any) => {gender = e.target.textContent;}} clearable options={genderTypes} selection />
-                            <Button color="teal" fluid size="large" onClick={(e: any) => register(uId, pId, dId)}>
+                            <Button color="teal" fluid size="large" onClick={(e: any) => register(uId, pId, dId, reloadPage)}>
                                 { name }
                             </Button>
                         </Segment>
@@ -111,7 +123,7 @@ const accountTypes = [
 ]
 
 
-const UILoginForm = (name: string) => {
+const UILoginForm = (name: string, reloadPage: Function) => {
     const uId: string = 'loginForm' + (++uniqueId).toString()
     const pId: string = 'loginForm' + (++uniqueId).toString()
 
@@ -133,7 +145,7 @@ const UILoginForm = (name: string) => {
                                 iconPosition="left"
                                 placeholder='password'
                             />
-                            <Button color="teal" fluid size="large" onClick={(e: any) => login(uId, pId)}>
+                            <Button color="teal" fluid size="large" onClick={(e: any) => login(uId, pId, reloadPage)}>
                                 { name }
                             </Button>
                         </Segment>
@@ -144,12 +156,29 @@ const UILoginForm = (name: string) => {
     )
 }
 
+type State = {
+    startReload: boolean
+}
 const Login = () => {
+    const [reload, startReload] = useState<State>({startReload: false})
+
+    const reloadPage = () => {
+        startReload({startReload: !reload})
+    }
+
+    reloadPage.bind(reload)
+    reloadPage.bind(startReload)
+
+    if (authService.isAuthenticated()) {
+        return <Redirect to='/home' />
+        //Logout()
+        //    .catch((e: any) => {console.log('Failed to logout!' + e.message)})
+    }
     return (
         <div >
-            { UILoginForm('Login User') }
-            { UILoginForm('Login Admin') }
-            { UIRegisterForm('Register User') }
+            { UILoginForm('Login User', reloadPage) }
+            { UILoginForm('Login Admin', reloadPage) }
+            { UIRegisterForm('Register User', reloadPage) }
         </div>
     )
 }

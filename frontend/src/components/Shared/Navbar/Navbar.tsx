@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Navbar, Nav} from "react-bootstrap";
+import {Navbar, Nav, Button} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logout from "../../../UseCases/Logout/Logout";
+import authService from "../../../UseCases/AuthService";
 
 const logout = () => {
     Logout()
@@ -22,7 +23,10 @@ export default class CustomNavbar extends Component {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
                     <Nav.Link href="/settings">Settings</Nav.Link>
-                    <Nav.Link onSelect={(e: any) => {logout()}}>Sign Out</Nav.Link>
+                    <Button  variant='light' onClick={(event: any) => {
+                        authService.removeAuth()
+                        window.location.href='/login'
+                    }}>Sign Out</Button>
                 </Nav>
             </Navbar.Collapse>
             </Navbar>

@@ -6,7 +6,7 @@ export const ProtectedRoute = ({DesiredPage, ...rest}: any) => (
 
     <div>
         <Route key={1} {...rest} component={(props: any) => {
-            if (true || authService.isAuthenticated()) { // TODO: REMOVE
+            if (authService.isAuthenticated()) {
                 return <DesiredPage {...props}/>
             }
 
