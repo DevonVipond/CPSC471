@@ -2,18 +2,23 @@
 import {User, UserProps} from "./Interfaces/User";
 
 type Props = {
-    id: string, 
+    id: string,
+    message: string
 }
 
 export class FriendRequest extends User {
 
     private _id: string = ""
-    constructor({id, username, distance, activities}: UserProps & Props) {
+    private _message: string = ""
+    constructor({id, username, distance, activities, message}: UserProps & Props) {
         super({username, distance, activities})
         this._id = id || ""
+        this._message = message || ""
     }
 
     public getId(): string { return this._id; }
+
+    public message(): string { return this._message }
 
     public toJSON(): UserProps{
         return super.toJSON()

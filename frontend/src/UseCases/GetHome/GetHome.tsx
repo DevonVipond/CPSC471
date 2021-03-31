@@ -40,7 +40,7 @@ export async function GetHome(): Promise<BoardT> {
 
             })
 
-            return new FriendRequest({id, username, distance, activities})
+            return new FriendRequest({id, username, distance, activities, ...f})
 
         })
 

@@ -15,6 +15,7 @@ const AppRouter = () => {
                 <ProtectedRoute key={1} path='/home' DesiredPage={HomePage}/>
                 <UserProtectedRoute key={1} path='/settings' DesiredPage={SettingsPage}/>
                 <Route key={1} path='/login' component={Login}/>
+                <Route key={1} path='/' > <Redirect to="/home" /> </Route>
             </Switch>
         </Router>
     )

@@ -55,16 +55,16 @@ const matches = [
 ]
 
 const friendReqs = [
-    new FriendRequest({ id: '1', username: 'Tupac Shakir', distance: '15km', activities: activitiesA }),
-    new FriendRequest({ id: '2', username: 'Biggie', distance: '10km', activities: activitiesB }),
-    new FriendRequest({ id: '3', username: 'Zeus', distance: '1km', activities: activitiesC }),
-    new FriendRequest({ id: '4', username: 'Charlie', distance: '22km', activities: activitiesD }),
-    new FriendRequest({ id: '5', username: 'Cardi B', distance: '75km', activities: activitiesA }),
-    new FriendRequest({ id: '6', username: 'Barack Obama', distance: '45km', activities: activitiesA }),
-    new FriendRequest({ id: '7', username: 'Starhorse', distance: '1km', activities: activitiesC }),
-    new FriendRequest({ id: '8', username: 'Mario', distance: '1km', activities: activitiesB }),
-    new FriendRequest({ id: '9', username: 'Jonah', distance: '5km', activities: activitiesD }),
-    new FriendRequest({ id: '10', username: 'Alex', distance: '7km', activities: activitiesB }),
+    new FriendRequest({ id: '1', username: 'Tupac Shakir', distance: '15km', activities: activitiesA, message: '' }),
+    new FriendRequest({ id: '2', username: 'Biggie', distance: '10km', activities: activitiesB, message: '' }),
+    new FriendRequest({ id: '3', username: 'Zeus', distance: '1km', activities: activitiesC, message: '' }),
+    new FriendRequest({ id: '4', username: 'Charlie', distance: '22km', activities: activitiesD, message: '' }),
+    new FriendRequest({ id: '5', username: 'Cardi B', distance: '75km', activities: activitiesA, message: '' }),
+    new FriendRequest({ id: '6', username: 'Barack Obama', distance: '45km', activities: activitiesA, message: '' }),
+    new FriendRequest({ id: '7', username: 'Starhorse', distance: '1km', activities: activitiesC, message: '' }),
+    new FriendRequest({ id: '8', username: 'Mario', distance: '1km', activities: activitiesB, message: '' }),
+    new FriendRequest({ id: '9', username: 'Jonah', distance: '5km', activities: activitiesD, message: '' }),
+    new FriendRequest({ id: '10', username: 'Alex', distance: '7km', activities: activitiesB, message: '' }),
 ]
 
 

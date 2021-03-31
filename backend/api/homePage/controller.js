@@ -3,17 +3,6 @@ const {validateType, TYPES} = require('../validators')
 const toDTO = require('../toDTO')
 const db = require('../../db/index')
 
-
-const getUserSettings = async (username) => {
-    validateType(username, TYPES.STRING)
-    const distanceDb   =  await db.exec('call GET_DISTANCE(?)', [username])
-    const activitiesDb = await db.exec('call GET_ACTIVITIES(?)', [username])
-
-    let distance = toDTO.distance(distanceDb.data)
-    let activities = toDTO.activities(activitiesDb.data)
-
-    return {distance, activities}
-}
 const calculateDistance = (user1Long, user1Lat, user2Lat, user2Long) => {
     //validateType(user1Long, TYPES.STRING)
     //validateType(user1Lat, TYPES.STRING)
@@ -25,34 +14,54 @@ const calculateDistance = (user1Long, user1Lat, user2Lat, user2Long) => {
     return Math.sqrt(Math.pow(deltaLat, 2), Math.pow(deltaLong, 2)).toFixed(2)
 }
 
-const filterMatches = (originLong, originLat, matches) => {
-    //validateType(originLong, TYPES.STRING)
-    //validateType(originLat, TYPES.STRING)
-    //validateType(matches, TYPES.OBJECT)
-    let matchesWithDistance = []
-    matches.forEach((m) => {
-        const {latitude, longitude} = m
-        //validateType(latitude, TYPES.STRING)
-        //validateType(longitude, TYPES.STRING)
+const makeUserResponse = (usersDb, authUserLat, authUserLong) => {
+    validateType(usersDb, TYPES.OBJECT)
+    validateType(authUserLat, TYPES.STRING)
+    validateType(authUserLong, TYPES.STRING)
 
-        const distance = calculateDistance(originLong, originLat, latitude, longitude)
-        if (distance <= m.distance) {
-            m.distance = distance
-            matchesWithDistance.push(m)
+    usersDb = usersDb.filter(u => {
+        return u.UserName !== null
+    })
+
+    let activitiesForUser = {}
+
+    usersDb.forEach(value => {
+        const { UserName, Activity, SkillLevel }  = value
+        if (Activity && SkillLevel) {
+            if (!activitiesForUser[UserName])
+                activitiesForUser[UserName] = []
+
+            activitiesForUser[UserName].push({name: Activity.toLowerCase(), skillLevel: SkillLevel.toLowerCase()})
         }
-
     })
 
-    let matchesSortedByDistance = matchesWithDistance.sort(function (lhs, rhs) {
-        return lhs.distance < rhs.distance
+    const usersWithActivitiesAndRelativeDistance =  usersDb.map(u => {
+        const { UserName, Distance, Latitude, Longitude, message }  = u
+        const distanceFromAuthUser = calculateDistance(Longitude, Latitude, authUserLat, authUserLong)
+        if (distanceFromAuthUser > Distance) return {}
+
+        let activities = activitiesForUser[UserName] ? activitiesForUser[UserName] : []
+
+
+        const attrs =  {
+            username: UserName,
+            distance: distanceFromAuthUser,
+            activities,
+        }
+        if (message) attrs.message = message
+
+        return attrs
+    }).filter(u => { return u.username })
+
+    let ret = {}
+    usersWithActivitiesAndRelativeDistance.forEach(user => {
+        const { username } = user
+        validateType(username, TYPES.STRING)
+
+        ret[username] = user
     })
 
-    let finializedMatches = []
-    for (let i = 0; i < matchesSortedByDistance.length && i < 10; i++) {
-        finializedMatches.push(matchesSortedByDistance[i])
-    }
-
-    return finializedMatches
+    return Object.values(ret)
 }
 
 const getHome = async (req, res) => {
@@ -70,36 +79,17 @@ const getHome = async (req, res) => {
         const userLocation = toDTO.location(locationDb.data)
 
         const friendsDb = await db.exec('call getFriends(?)', [username])
-        let friends = toDTO.users(friendsDb.data)
-        for (let i=0; i<friends.length; i++) {
-            const {  activities, distance } = await getUserSettings(friends[i].username)
-            friends[i].activities = activities
-            friends[i].distance = calculateDistance(userLocation.longitude, userLocation.latitude, distance)
-        }
-
+        const friends = makeUserResponse(friendsDb.data, userLocation.latitude, userLocation.longitude)
 
         let matchesDb = await db.exec('call getMatches(?)', [username])
-        let matches = toDTO.users(matchesDb.data)
-        for (let i=0; i<matches.length; i++) {
-            const {  activities } = await getUserSettings(matches[i].username)
-            matches[i].activities = activities
-        }
-        matches = filterMatches(userLocation.longitude, userLocation.latitude, matches)
-
-        matches = matches.map(m => {
-            delete m.latitude
-            delete m.longitude
-            return m
-        })
+        const matches = makeUserResponse(matchesDb.data, userLocation.latitude, userLocation.longitude)
 
         let incomingFriendRequestsDb = await db.exec('call incomingFriendRequests(?)', [username])
-        let incomingFriendRequests = toDTO.users(incomingFriendRequestsDb.data)
-        for (let i=0; i<incomingFriendRequests.length; i++) {
-            const {  activities, distance } = await getUserSettings(incomingFriendRequests[i].username)
-            incomingFriendRequests[i].activities = activities
-            incomingFriendRequests[i].distance = calculateDistance(userLocation.longitude, userLocation.latitude, distance)
-        }
+        const incomingFriendRequests = makeUserResponse(incomingFriendRequestsDb.data, userLocation.latitude, userLocation.longitude)
 
+        validateType(friends, TYPES.OBJECT)
+        validateType(matches, TYPES.OBJECT)
+        validateType(incomingFriendRequests, TYPES.OBJECT)
         const response = { friends, matches, incomingFriendRequests }
 
         success(res, response)

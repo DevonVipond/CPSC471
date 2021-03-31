@@ -117,7 +117,7 @@ export const MatchItem = ({ user , reloadBoard }: { user: Match, reloadBoard: Fu
 
         if (connectMessageComponent)
             ConnectWithMatch(user, connectMessageComponent.value)
-                .then((res: any) => { reloadBoard() })
+                .then((res: any) => {  setShowModal(false); reloadBoard(); })
                 .catch((err: any) => { logError(err) })
     }
 
@@ -149,7 +149,7 @@ export const ReportedUserItem  = ({ user , reloadBoard }: { user: ReportedUser, 
 
     const deleteUser = (e: any) => {
         DeleteUser(username, primaryKey)
-            .then((res: any) => { reloadBoard() })
+            .then((res: any) => {setShowModal(false); reloadBoard(); })
             .catch((err: any) => { logError(err) })
     }
 
@@ -161,7 +161,7 @@ export const ReportedUserItem  = ({ user , reloadBoard }: { user: ReportedUser, 
 
         if (connectMessageComponent)
             ResolveReport(primaryKey, connectMessageComponent.value)
-                .then((res: any) => { reloadBoard() })
+                .then((res: any) => { setShowModal(false); reloadBoard() })
                 .catch((err: any) => { logError(err) })
     }
 
@@ -192,15 +192,11 @@ export const ReportedUserItem  = ({ user , reloadBoard }: { user: ReportedUser, 
 }
 
 export const FriendRequestItem = ({ user , reloadBoard }: { user: FriendRequest, reloadBoard: Function }) => {
-    const [ showModal, setShowModal ] = React.useState(false)
 
-    const accept = (e: any, messageBoxId: string) => {
-        const messageComponent: any = document.getElementById(messageBoxId)
-
-        if (messageComponent)
-            AcceptFriendRequest(user, messageComponent.value)
-                .then((res: any) => { reloadBoard() })
-                .catch((err: any) => { logError(err) })
+    const accept = (e: any) => {
+        AcceptFriendRequest(user)
+            .then((res: any) => { reloadBoard() })
+            .catch((err: any) => { logError(err) })
     }
 
     accept.bind(user)
@@ -215,14 +211,14 @@ export const FriendRequestItem = ({ user , reloadBoard }: { user: FriendRequest,
             <a>
                 <p className='itemLabel' id='companyLabel'>{user.username()}</p>
                 <p className='itemLabel' id='positionLabel'>{user.distance()}</p>
+                <p className='itemLabel' id='positionLabel'>{user.message()}</p>
                 <div>
                     { user.activities().map( a => ( activityIcon(a.name(), a.skillLevel()) ) ) }
                 </div>
-                <div className="ui bottom attached button" onClick={() => setShowModal(true)} id="addButton" >
-                    <i className="add icon" ></i>
+                <div className="ui bottom attached button" id="addButton" onClick={(e: any) => accept(e)} >
+                    <i className="minus icon"></i>
                     Accept
                 </div>
-                <ReportUserModal reportFriend={accept} show={showModal} onHide={() => setShowModal(false)}/>
                 <div className="ui bottom attached button" id="addButton" onClick={(e: any) => reject(e)} >
                     <i className="minus icon"></i>
                     Reject
