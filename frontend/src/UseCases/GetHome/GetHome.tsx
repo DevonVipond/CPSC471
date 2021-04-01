@@ -34,13 +34,14 @@ export async function GetHome(): Promise<BoardT> {
             const id = "1"
             const username = f['username']
             const distance = f['distance']
+            const message = f['message']
             const activities: Array<Activity> = f['activities'].map((activity: any) => {
 
                 return new Activity(activity)
 
             })
 
-            return new FriendRequest({id, username, distance, activities, ...f})
+            return new FriendRequest({id, username, distance, activities, message})
 
         })
 

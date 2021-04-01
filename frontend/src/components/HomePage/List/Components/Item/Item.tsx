@@ -206,6 +206,8 @@ export const FriendRequestItem = ({ user , reloadBoard }: { user: FriendRequest,
             .then((res: any) => { reloadBoard() })
             .catch((err: any) => { logError(err) })
     }
+
+    console.log('grepme', JSON.stringify(user))
     return (
         <div className='itemContainer' >
             <a>
@@ -213,7 +215,7 @@ export const FriendRequestItem = ({ user , reloadBoard }: { user: FriendRequest,
                 <p className='itemLabel' id='positionLabel'>{user.distance()}</p>
                 <p className='itemLabel' id='positionLabel'>{user.message()}</p>
                 <div>
-                    { user.activities().map( a => ( activityIcon(a.name(), a.skillLevel()) ) ) }
+                    { user.activities() && user.activities().map( (a: Activity) => ( activityIcon(a.name(), a.skillLevel()) ) ) }
                 </div>
                 <div className="ui bottom attached button" id="addButton" onClick={(e: any) => accept(e)} >
                     <i className="minus icon"></i>

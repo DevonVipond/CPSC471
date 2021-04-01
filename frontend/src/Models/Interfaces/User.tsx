@@ -9,7 +9,7 @@ export type UserProps = {
 export abstract class User {
     protected _username: string
     protected _distance: string
-    protected _activities: Array<Activity>
+    protected _activities: Array<Activity> = []
 
     protected constructor({username, distance, activities}: UserProps) {
         if (!username || distance === null || distance === undefined || !activities)
