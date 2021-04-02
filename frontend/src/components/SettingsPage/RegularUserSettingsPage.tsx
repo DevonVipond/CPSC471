@@ -52,23 +52,21 @@ const RegularUserSettingsPage = () => {
         reloadPage()
     }, [])
 
+    if (state.loading) return <h3> Loading </h3>
+
     const {distance, activities}: any = state
     let selectedActivity: string = Activity.ActivityNames.SOCCER
     let selectedSkillLevel: string = Activity.SkillLevel.BEGINNER
 
-    let defaultActivity: any = activityOptions[0]
-    let defaultSkill: any = skillLevelOptions[0]
     if (activities && activities.length) {
-        defaultActivity =  activityOptions.find((f: {key: number, value: string, text: string}) => {return f.text.toLowerCase() === activities[0].name().toLowerCase()})
-        defaultSkill = skillLevelOptions.find((f: {key: number, value: string, text: string}) => {return f.text.toLowerCase() === activities[0].skillLevel().toLowerCase()})
+        selectedActivity = activities[0].name().toLowerCase()
+        selectedSkillLevel = activities[0].skillLevel().toLowerCase()
     }
 
     return (
         <div className='settingsContainer'>
-            <p>Current Activity: {defaultActivity.text}</p>
-            <p>Current Skill Level: {defaultSkill.text}</p>
-            <Dropdown id={'activityDropdown'} onChange={(e: any, data: any) => {selectedActivity = e.target.textContent;}} clearable options={activityOptions} selection />
-            <Dropdown id={'skillLevelDropdown'} onChange={(e: any, data: any) => {selectedSkillLevel = e.target.textContent;}} clearable options={skillLevelOptions} selection />
+            <Dropdown id={'activityDropdown'} onChange={(e: any, data: any) => {selectedActivity = e.target.textContent;}} clearable options={activityOptions} selection placeholder={activityOptions.find((f: any) => (f.value === selectedActivity))?.value }/>
+            <Dropdown id={'skillLevelDropdown'} onChange={(e: any, data: any) => {selectedSkillLevel = e.target.textContent;}} clearable options={skillLevelOptions} selection placeholder={skillLevelOptions.find((f: any) => (f.value === selectedSkillLevel))?.value }/>
             <h3>{ distance }</h3>
             <div className="ui bottom attached button" onClick={(e: any) => save()} id="addButton" >
                 <i className="add icon" ></i>

@@ -33,47 +33,6 @@ class toDTO {
         }
     }
 
-    users(usersDb) {
-        return usersDb.filter(u => {
-            return u.UserName !== null
-        }).map(u => {
-            const { UserName, Distance, Latitude, Longitude }  = u
-            return {
-                username: UserName,
-                distance: Distance,
-                latitude: Latitude,
-                longitude: Longitude,
-            }
-
-        })
-    }
-
-    //friends(friendsDb) {
-    //    return this.users(friendsDb).map(m => {
-    //        let { username, distance, activities } = m
-    //        activities = this.activities(activities)
-
-    //        return { username, distance, activities }
-    //    })
-    //}
-
-    //friendRequests(friendRequestsDb) {
-    //    return this.users(friendRequestsDb).map(f => {
-    //        let { username, distance, activities } = f
-    //        activities = this.activities(activities)
-
-    //        return { username, distance, activities }
-    //    })
-    //}
-
-    //matches(matchesDb) {
-    //    return this.users(matchesDb).map(m => {
-    //        let { username, distance, activities } = m
-    //        activities = this.activities(activities)
-
-    //        return { username, distance, activities }
-    //    })
-    //}
 
     wasSuccessful(dbResult) {
         const filteredData = dbResult.filter(element => { return element['@res'] })
