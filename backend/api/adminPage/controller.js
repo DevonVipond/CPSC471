@@ -58,7 +58,7 @@ const resolveReport = async (req, res) => {
     try {
 
         const successDb = await db.exec('call RESOLVE_REPORT(?,?,?)', [adminUsername, reportRowPrimaryKey, adminComments])
-        const procedureSucceeded = toDTO.wasSuccessful(successDb)
+        const procedureSucceeded = successDb.affectedRows > 0
 
         if (!procedureSucceeded) {
             badRequest(res, "Report does not exist!")
