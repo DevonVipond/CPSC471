@@ -17,6 +17,8 @@ class Api {
 
         } catch (e) {
 
+            alert('Request: ' + url + ' Failed!')
+
             throw e
 
         }
@@ -35,6 +37,9 @@ class Api {
             return res.data
 
         } catch (e) {
+
+            alert('Request: ' + url + ' Failed!')
+
             throw e
         }
     }

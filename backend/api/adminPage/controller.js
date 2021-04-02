@@ -105,4 +105,4 @@ const deleteUser = async (req, res) => {
 
 }
 
-module.exports = { getUncheckedReports, resolveReport, deleteUser }
+module.exports = { getUncheckedReports, resolveReport, deleteUser, isAdmin }

@@ -1,5 +1,6 @@
-const { badRequest, internalError, success } = require("../responseHandler")
+const { badRequest, internalError, success, unauthorized } = require("../responseHandler")
 const {validateType, TYPES} = require('../validators')
+const { isAdmin } = require('../adminPage/controller')
 const toDTO = require('../toDTO')
 const db = require('../../db/index')
 
@@ -75,6 +76,12 @@ const getHome = async (req, res) => {
             return
         }
 
+        const isUserAdmin = await isAdmin(username)
+        if (isUserAdmin) {
+            unauthorized(res)
+            return
+        }
+
         const locationDb =  await db.exec('call getLocation(?)', [ username ])
         const userLocation = toDTO.location(locationDb.data)
 
@@ -103,6 +110,12 @@ const connectWithMatch = async (req, res) => {
 
     const  username  = req.username
     const { recipientUsername, message } = req.body
+
+    const isUserAdmin = await isAdmin(username)
+    if (isUserAdmin) {
+        unauthorized(res)
+        return
+    }
 
     try {
         validateType(username, TYPES.STRING)
@@ -143,6 +156,12 @@ const reportFriend = async (req, res) => {
     const  username  = req.username
     const { reportedFriendUsername, message } = req.body
 
+    const isUserAdmin = await isAdmin(username)
+    if (isUserAdmin) {
+        unauthorized(res)
+        return
+    }
+
     try {
         validateType(reportedFriendUsername, TYPES.STRING)
         validateType(message, TYPES.STRING)
@@ -180,6 +199,12 @@ const acceptFriendRequest = async (req, res) => {
 
     const  username  = req.username
     const { requestorUsername } = req.body
+
+    const isUserAdmin = await isAdmin(username)
+    if (isUserAdmin) {
+        unauthorized(res)
+        return
+    }
 
     try {
         validateType(requestorUsername, TYPES.STRING)
@@ -219,6 +244,12 @@ const rejectFriendRequest = async (req, res) => {
     const  username  = req.username
     const { requestorUsername } = req.body
 
+    const isUserAdmin = await isAdmin(username)
+    if (isUserAdmin) {
+        unauthorized(res)
+        return
+    }
+
     try {
         validateType(requestorUsername, TYPES.STRING)
         validateType(username, TYPES.STRING)
@@ -256,6 +287,12 @@ const reviewFriend = async (req, res) => {
 
     const  username  = req.username
     const { friendUsername, rating } = req.body
+
+    const isUserAdmin = await isAdmin(username)
+    if (isUserAdmin) {
+        unauthorized(res)
+        return
+    }
 
     validateType(username, TYPES.STRING)
 
