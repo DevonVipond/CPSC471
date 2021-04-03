@@ -91,7 +91,7 @@ const deleteUser = async (req, res) => {
 
     try {
         const successDb = await db.exec('call DELETE_USER(?,?,?)', [adminUsername, usernameOfUserToDelete, reportRowPrimaryKey])
-        const procedureSucceeded = toDTO.wasSuccessful(successDb)
+        const procedureSucceeded = successDb.affectedRows > 0
 
         if (!procedureSucceeded) {
             badRequest(res, "User has never been reported!")
