@@ -2,6 +2,7 @@ const db = require(".././../db/index")
 const { success, internalError, badRequest } = require("../responseHandler")
 const { setLoginCookies, setLogoutCookies} = require('../../middlewares/auth')
 const { createTokens } = require('./helpers')
+const {ACTIVITY_NAMES, ACCOUNT_TYPES } = require('../../constants')
 const toDTO = require('../toDTO')
 
 const userLogin = async (req, res) => {
@@ -99,6 +100,8 @@ const register = async (req, res) => {
             badRequest(res, "Failed to add users location!")
             return
         }
+
+        await db.exec('call ADD_ACTIVITY(?,?,?)', [username, ACTIVITY_NAMES.SOCCER.toLowerCase(), 'beginner'])
 
         const { accessToken, refreshToken } = createTokens(username)
         setLoginCookies(res, accessToken, refreshToken)
