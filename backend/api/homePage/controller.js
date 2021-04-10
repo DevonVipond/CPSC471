@@ -37,7 +37,7 @@ const makeUserResponse = async (usersDb, authUserLat, authUserLong) => {
     })
 
     const usersWithActivitiesAndRelativeDistance =  usersDb.map(u => {
-        const { UserName, Distance, Latitude, Longitude, message, PhoneNumber }  = u
+        const { UserName, Distance, Latitude, Longitude, message, PhoneNumber, About }  = u
         const distanceFromAuthUser = calculateDistance(Longitude, Latitude, authUserLat, authUserLong)
         if (distanceFromAuthUser > Distance) return {}
 
@@ -51,6 +51,7 @@ const makeUserResponse = async (usersDb, authUserLat, authUserLong) => {
         }
         if (message) attrs.message = message
         if (PhoneNumber) attrs.phoneNumber = PhoneNumber
+        if (About) attrs.about = About
 
         return attrs
     }).filter(u => { return u.username })

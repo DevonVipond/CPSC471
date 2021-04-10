@@ -2,6 +2,7 @@ const __validate = (name: string, skillLevel: string) => {
     if (!name) {
         throw new Error('Class Activity: Name Required!')
     }
+
     const getValues: any = (hashMap: any) => {
         const keys = Object.keys(hashMap)
         return keys.map((key: any, arr: any, idx: any) => {return hashMap[key]})

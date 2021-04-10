@@ -53,6 +53,7 @@ export async function GetHome(): Promise<BoardT> {
             const distance = f['distance']
             const averageReviewScore = f['averageReviewScore']
             const phoneNumber = f['phoneNumber']
+            const bio = f['about']
 
             const activities: Array<Activity> = f['activities'].map((activity: any) => {
 
@@ -60,7 +61,7 @@ export async function GetHome(): Promise<BoardT> {
 
             })
 
-            return new Friend({username, distance, activities, averageReviewScore, phoneNumber})
+            return new Friend({username, distance, activities, averageReviewScore, phoneNumber, bio})
 
         })
 

@@ -90,6 +90,7 @@ export const FriendItem = ({ user, reloadBoard }: { user: Friend, reloadBoard: F
                 </div>
                 { user.averageReviewScore() && [ <div> Average Review Score { user.averageReviewScore() } </div> ] }
                 { user.phoneNumber() && [ <div> Phone Number { user.phoneNumber() } </div> ] }
+                <h5 style={{fontSize: '9px'}}> { user.bio() }</h5>
                 <div className="ui bottom attached button" onClick={() => setShowReviewModal(true)} id="addButton" >
                     <i className="add icon" ></i>
                     Review
